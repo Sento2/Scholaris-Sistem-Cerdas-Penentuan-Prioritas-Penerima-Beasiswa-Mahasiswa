@@ -11,11 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('kriterias', function (Blueprint $table) {
+        Schema::create('dokumens', function (Blueprint $table) {
             $table->id();
-            $table->string('nama');
-            $table->float('bobot');
-            $table->enum('jenis', ['benefit', 'cost']);
+            $table->foreignId('pengajuan_id')->constrained('pengajuans')->onDelete('cascade');
+            $table->string('nama_file');
+            $table->string('path');
+            $table->enum('status_verif', ['belum', 'valid', 'tidak valid'])->default('belum');
             $table->timestamps();
         });
     }
@@ -25,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('kriterias');
+        Schema::dropIfExists('dokumens');
     }
 };

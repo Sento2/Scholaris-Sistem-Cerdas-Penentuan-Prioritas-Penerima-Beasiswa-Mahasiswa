@@ -11,11 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('kriterias', function (Blueprint $table) {
+        Schema::create('beasiswas', function (Blueprint $table) {
             $table->id();
             $table->string('nama');
-            $table->float('bobot');
-            $table->enum('jenis', ['benefit', 'cost']);
+            $table->integer('kuota');
+            $table->date('deadline');
+            $table->enum('status', ['aktif', 'nonaktif'])->default('aktif');
             $table->timestamps();
         });
     }
@@ -25,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('kriterias');
+        Schema::dropIfExists('beasiswas');
     }
 };
