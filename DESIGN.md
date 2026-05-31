@@ -1,58 +1,91 @@
-# Scholaris Design System
+# Scholaris Design System (v2.0)
 
-Scholaris adalah sistem rekomendasi beasiswa akademik yang menggabungkan prestise institusi pendidikan dengan fungsionalitas SaaS modern. Sistem desain ini memastikan konsistensi visual antara portal mahasiswa dan dashboard admin.
+Scholaris adalah sistem rekomendasi beasiswa akademik berbasis algoritma **Simple Additive Weighting (SAW)**. Sistem desain ini dirancang untuk menjembatani wibawa institusi pendidikan dengan efisiensi platform SaaS modern, memberikan transparansi penuh bagi mahasiswa dan kendali data bagi administrator.
 
-## Filosofi Desain
-- **Akademik & Bergengsi**: Menggunakan palet warna navy yang dalam dan tipografi yang kuat untuk menciptakan kesan institusional.
-- **Transparan & Edukatif**: Visualisasi algoritma SAW yang jelas untuk memberikan pemahaman kepada pengguna.
-- **Modern & Responsif**: Layout bersih dengan penggunaan whitespace yang cerdas dan sudut membulat (12px) untuk kesan bersahabat.
+---
 
-## Palet Warna
+## 1. Filosofi & Prinsip Desain
 
-### Warna Utama (Brand)
-- **Deep Navy (#1B2A4A)**: Digunakan untuk header, sidebar admin, dan elemen prestise. Memberikan kesan otoritas dan stabilitas.
-- **Teal Green (#1D9E75)**: Warna aksen untuk aksi utama (CTA), indikator sukses, dan progres. Memberikan kesan pertumbuhan dan optimisme.
+- **Akademik & Bergengsi**: Menggunakan palet warna navy yang dalam dan tipografi yang kuat untuk menciptakan kesan otoritas, stabilitas, dan prestise.
+- **Transparansi Algoritma**: Visualisasi data (SAW score) harus mudah dipahami, tidak mengintimidasi, dan membantu pengguna memahami proses seleksi.
+- **Kejelasan Status**: Memberikan kepastian bagi mahasiswa melalui indikator progres yang jelas dan bahasa yang komunikatif.
+- **Modernitas Terukur**: Menggunakan sudut membulat 12px, bayangan lembut, dan whitespace yang luas untuk menghindari kesan birokrasi yang kaku.
 
-### Warna Pendukung
-- **Surface White (#F9F9F9)**: Latar belakang utama untuk menjaga kebersihan visual.
-- **Soft Blue (#E2E8F0)**: Digunakan untuk area konten sekunder atau kartu informasi mahasiswa.
-- **Warning Yellow (#F59E0B)**: Untuk status "Menunggu" atau "Cadangan".
-- **Danger Red (#EF4444)**: Untuk status "Ditolak" atau "Tidak Lolos".
+---
 
-## Tipografi
-- **Primary Font**: Inter (Sans-Serif Geometris modern).
-- **Display Font**: Serif elegan (untuk logo/branding) untuk menonjolkan sisi prestise akademik.
+## 2. Identitas Visual
 
-### Skala Tipografi
-- **Headline 1 (Desktop)**: 32px, Bold, Navy - Judul halaman utama.
-- **Headline 2**: 24px, Semibold - Judul bagian atau kartu.
-- **Body Large**: 18px, Regular - Teks pengantar atau highlight.
-- **Body Medium**: 16px, Regular - Teks konten standar.
-- **Label/Caption**: 14px, Medium - Label tabel, badge status, dan teks kecil lainnya.
+### 2.1 Palet Warna
 
-## Komponen Utama
+| Peran             | Nama        | Hex Code  | Penggunaan Utama                                  |
+| :---------------- | :---------- | :-------- | :------------------------------------------------ |
+| **Brand Primary** | Deep Navy   | `#1B2A4A` | Sidebar Admin, Header, Teks Judul, Navigasi.      |
+| **Brand Accent**  | Teal Green  | `#1D9E75` | CTA Utama, Indikator "Lolos", Progress Bar Aktif. |
+| **Surface**       | Ghost White | `#F9F9F9` | Latar belakang halaman utama.                     |
+| **Surface-Dim**   | Soft Slate  | `#E2E8F0` | Kartu informasi mahasiswa, area konten sekunder.  |
+| **Success**       | Emerald     | `#10B981` | Badge status "Lolos" atau "Terverifikasi".        |
+| **Warning**       | Amber       | `#F59E0B` | Badge status "Menunggu" atau "Cadangan".          |
+| **Danger**        | Crimson     | `#EF4444` | Badge status "Ditolak" atau "Tidak Lolos".        |
 
-### 1. Kartu Statistik (Stats Cards)
-- **Style**: Background putih, rounded corners 12px, shadow lembut (subtle), tanpa border keras.
-- **Iconography**: Menggunakan ikon linear dengan warna aksen yang sesuai.
+### 2.2 Tipografi
 
-### 2. Tabel Data & Ranking
-- **Zebra Striping**: Sangat halus untuk baris tabel.
-- **Status Badges**: Pill-shaped dengan latar belakang warna pastel dan teks yang kontras.
-- **Score Bars**: Bar horizontal ramping di dalam sel tabel untuk visualisasi skor SAW (0.0 - 1.0).
+Sistem tipografi menggunakan skala geometris untuk menjaga ritme visual yang konsisten.
 
-### 3. Stepper Progress
-- **Visual**: Garis penghubung yang jelas antar langkah.
-- **Active State**: Lingkaran hijau dengan ikon check atau titik fokus.
+- **Primary Font**: `Inter` (Sans-Serif) – Untuk semua elemen fungsional, label, dan isi konten.
+- **Branding Font**: `Elegant Serif` (misal: Playfair Display) – Digunakan terbatas pada logo (Wordmark) dan headline besar pada halaman login untuk kesan institusional.
 
-### 4. Sidebar & Navigasi
-- **Admin**: Sidebar navy gelap yang tetap (fixed) dengan ikon minimalis.
-- **Mahasiswa**: Header navigasi atas yang bersih atau bottom nav pada mobile.
+**Skala Tipografi (Desktop):**
 
-## Layout & Spacing
-- **Grid**: Sistem grid 12 kolom untuk desktop.
-- **Padding**: Standar 24px - 32px untuk container utama.
-- **Rounded Corners**: Konsisten 12px untuk elemen utama (kartu, tombol besar, modal).
+- **Display/H1**: 32px, Bold, Navy (Judul Halaman)
+- **Headline/H2**: 24px, Semibold, Navy (Judul Seksi/Kartu)
+- **Body Large**: 18px, Medium (Teks Pengantar)
+- **Body Base**: 16px, Regular (Konten Standar/Input)
+- **Label/Small**: 14px, Medium (Badge, Teks Tabel, Caption)
 
-## Bahasa Konten
-- Menggunakan Bahasa Indonesia yang formal namun tetap mudah dimengerti (Bahasa Indonesia Baku untuk sistem akademik).
+---
+
+## 3. Komponen Utama & Pola UI
+
+### 3.1 Kartu Statistik (Stats Cards)
+
+- **Struktur**: Ikon (linear background), Label (Caption), Nilai Utama (Large Bold).
+- **Visual**: Background putih, rounded 12px, border-radius 12px, shadow `0 4px 6px -1px rgb(0 0 0 / 0.1)`.
+
+### 3.2 Tabel Ranking SAW
+
+- **Baris**: Background putih dengan hover state lembut. Baris Top-N (kuota) diberi highlight hijau sangat transparan.
+- **Kolom Skor SAW**: Wajib menyertakan _inline progress bar_ ramping (height: 8px) berwarna Teal Green untuk merepresentasikan nilai 0.0 - 1.0 secara visual.
+- **Badge Status**: Pill-shaped, semi-transparent background dengan warna teks yang kontras (Success/Warning/Danger).
+
+### 3.3 Stepper Progress (Pelacakan Beasiswa)
+
+- **State**:
+    - _Selesai_: Ikon check hijau + garis hijau solid.
+    - _Sedang Berjalan_: Lingkaran dengan border hijau + teks bold.
+    - _Belum Mulai_: Ikon abu-abu + garis putus-putus.
+
+---
+
+## 4. Sistem Layout & Grid
+
+- **Grid (Desktop)**: 12 Kolom, Gutter 24px, Margin Samping minimal 32px.
+- **Spacing System**: Kelipatan 4px atau 8px (4, 8, 16, 24, 32, 48, 64) untuk menjaga konsistensi vertikal dan horizontal.
+- **Responsive Breakpoints**:
+    - Mobile: < 768px (Navigasi bawah/bottom nav)
+    - Tablet: 768px - 1024px
+    - Desktop: > 1024px (Navigasi samping/sidebar tetap)
+
+---
+
+## 5. Bahasa & Konten
+
+- **Nada Bicara**: Profesional, Informatif, dan Empati.
+- **Bahasa**: Bahasa Indonesia Baku untuk istilah sistem akademik (contoh: "Unduh Dokumen" bukan "Download File").
+- **Transparansi Data**: Setiap angka skor harus dapat ditelusuri sumbernya (misal: menampilkan rumus atau kriteria pembobotannya).
+
+---
+
+## 6. Aset Visual
+
+- **Ikonografi**: Menggunakan set ikon linear/outline yang konsisten (seperti Lucide atau Google Symbols) dengan stroke-width yang seragam.
+- **Citra**: Gunakan foto profil mahasiswa asli atau ilustrasi geometris abstrak. Hindari clipart generik.
