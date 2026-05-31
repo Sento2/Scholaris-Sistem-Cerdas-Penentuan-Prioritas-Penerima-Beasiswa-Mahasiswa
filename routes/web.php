@@ -71,6 +71,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->name('admin.')
         ->group(function () {
             Route::get('/dashboard',            [AdminController::class, 'dashboard'])->name('dashboard');
+            
+            // Kelola Beasiswa & Pengguna (Tambahan berdasarkan ERD)
+            Route::resource('beasiswa', \App\Http\Controllers\BeasiswaController::class);
+            Route::resource('pengguna', \App\Http\Controllers\PenggunaController::class);
+
             Route::get('/ranking',              [AdminController::class, 'ranking'])->name('ranking');
             Route::post('/ranking/hitung',      [AdminController::class, 'hitungSAW'])->name('ranking.hitung');
             Route::post('/ranking/tetapkan',    [AdminController::class, 'tetapkanHasil'])->name('ranking.tetapkan');

@@ -13,6 +13,12 @@ return new class extends Migration
     {
         Schema::create('pengajuans', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('mahasiswa_id')->constrained('mahasiswas')->onDelete('cascade');
+            $table->foreignId('beasiswa_id')->constrained('beasiswas')->onDelete('cascade');
+            $table->enum('status', ['diajukan', 'diproses', 'diterima', 'ditolak'])->default('diajukan');
+            $table->float('skor_saw')->nullable();
+            $table->integer('rank')->nullable();
+            $table->timestamp('submitted_at')->nullable();
             $table->timestamps();
         });
     }
