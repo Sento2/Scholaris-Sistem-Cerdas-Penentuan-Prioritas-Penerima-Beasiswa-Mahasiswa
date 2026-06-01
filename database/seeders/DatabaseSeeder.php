@@ -17,12 +17,16 @@ class DatabaseSeeder extends Seeder
     {
         // Buat akun admin
         User::updateOrCreate(
-            ['email' => 'admin@scholaris.com'],
+            ['email' => 'admin@scholaris.ac.id'], // Ganti ke .ac.id biar seragam dengan dummy
             [
                 'name' => 'Admin Jurusan',
                 'password' => bcrypt('password'),
                 'role' => 'admin',
             ]
         );
+
+        $this->call([
+            DummyDataSeeder::class,
+        ]);
     }
 }

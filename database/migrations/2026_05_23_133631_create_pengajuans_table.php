@@ -15,9 +15,23 @@ return new class extends Migration
             $table->id();
             $table->foreignId('mahasiswa_id')->constrained('mahasiswas')->onDelete('cascade');
             $table->foreignId('beasiswa_id')->constrained('beasiswas')->onDelete('cascade');
-            $table->enum('status', ['diajukan', 'diproses', 'diterima', 'ditolak'])->default('diajukan');
+            $table->enum('status', ['menunggu', 'diverifikasi', 'dihitung', 'diterima', 'ditolak'])->default('menunggu');
+            
+            $table->text('catatan_dosen')->nullable();
+            $table->text('catatan_admin')->nullable();
             $table->float('skor_saw')->nullable();
             $table->integer('rank')->nullable();
+            
+            $table->string('dokumen_ktp')->nullable();
+            $table->string('dokumen_kk')->nullable();
+            $table->string('dokumen_sktm')->nullable();
+            $table->string('dokumen_transkrip')->nullable();
+            $table->string('dokumen_prestasi')->nullable();
+            
+            $table->timestamp('diverifikasi_at')->nullable();
+            $table->timestamp('dihitung_at')->nullable();
+            $table->timestamp('diputuskan_at')->nullable();
+            
             $table->timestamp('submitted_at')->nullable();
             $table->timestamps();
         });

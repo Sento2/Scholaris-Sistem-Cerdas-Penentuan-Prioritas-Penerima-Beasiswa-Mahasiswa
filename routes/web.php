@@ -8,8 +8,7 @@ use Illuminate\Support\Facades\Route;
 
 // -------------------------------------------------------
 //  HALAMAN PUBLIK
-// -------------------------------------------------------
-Route::get('/', fn() => view('welcome'));
+Route::get('/', fn() => redirect()->route('login'));
 
 // -------------------------------------------------------
 //  AUTH (login, register, dll — dibuat oleh Breeze)
@@ -44,10 +43,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->name('mahasiswa.')
         ->group(function () {
             Route::get('/dashboard',    [MahasiswaController::class, 'dashboard'])->name('dashboard');
+            Route::get('/beasiswa',     [MahasiswaController::class, 'beasiswa'])->name('beasiswa');
             Route::get('/daftar',       [MahasiswaController::class, 'formPengajuan'])->name('daftar');
             Route::post('/daftar',      [MahasiswaController::class, 'simpanPengajuan'])->name('daftar.simpan');
             Route::get('/status',       [MahasiswaController::class, 'status'])->name('status');
             Route::get('/skor',         [MahasiswaController::class, 'skorSaya'])->name('skor');
+            Route::get('/profil',       [MahasiswaController::class, 'editProfil'])->name('profil.edit');
+            Route::patch('/profil',     [MahasiswaController::class, 'updateProfil'])->name('profil.update');
         });
 
     // -------------------------------------------------------

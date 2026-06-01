@@ -42,26 +42,31 @@ class MahasiswaController extends Controller
     // -------------------------------------------------------
 
     /**
+     * Tampilkan daftar beasiswa yang tersedia.
+     */
+    public function beasiswa(): View
+    {
+        $beasiswas = \App\Models\Beasiswa::where('status', 'aktif')->get();
+        return view('mahasiswa.beasiswa', compact('beasiswas'));
+    }
+
+    /**
      * Tampilkan form pengajuan beasiswa baru.
      */
     public function formPengajuan(): View|RedirectResponse
     {
         $user      = Auth::user();
         $mahasiswa = $user->mahasiswa;
+        $pengajuanAktif = false;
 
         // Cek apakah sudah punya pengajuan aktif
         if ($mahasiswa) {
             $pengajuanAktif = Pengajuan::where('mahasiswa_id', $mahasiswa->id)
                 ->whereNotIn('status', [Pengajuan::STATUS_DITOLAK])
                 ->exists();
-
-            if ($pengajuanAktif) {
-                return redirect()->route('mahasiswa.dashboard')
-                    ->with('warning', 'Anda sudah memiliki pengajuan beasiswa yang sedang diproses.');
-            }
         }
 
-        return view('mahasiswa.daftar', compact('mahasiswa'));
+        return view('mahasiswa.daftar', compact('mahasiswa', 'pengajuanAktif'));
     }
 
     /**
@@ -176,5 +181,61 @@ class MahasiswaController extends Controller
             : null;
 
         return view('mahasiswa.status', compact('pengajuan', 'mahasiswa'));
+    }
+
+    // -------------------------------------------------------
+    //  PROFIL MAHASISWA
+    // -------------------------------------------------------
+
+    /**
+     * Tampilkan form edit profil mahasiswa.
+     */
+    public function editProfil(): View
+    {
+        $user      = Auth::user();
+        $mahasiswa = $user->mahasiswa;
+
+        return view('mahasiswa.profil', compact('user', 'mahasiswa'));
+    }
+
+    /**
+     * Simpan perubahan profil mahasiswa.
+     */
+    public function updateProfil(Request $request): RedirectResponse
+    {
+        $user = Auth::user();
+
+        $request->validate([
+            'name'             => ['required', 'string', 'max:255'],
+            'nim'              => ['required', 'string', 'max:20'],
+            'prodi'            => ['required', 'string', 'max:100'],
+            'angkatan'         => ['required', 'integer', 'min:2000', 'max:2099'],
+            'no_hp'            => ['nullable', 'string', 'max:20'],
+            'alamat'           => ['nullable', 'string', 'max:500'],
+            'nama_ayah'        => ['nullable', 'string', 'max:100'],
+            'nama_ibu'         => ['nullable', 'string', 'max:100'],
+            'pekerjaan_ayah'   => ['nullable', 'string', 'max:100'],
+            'pekerjaan_ibu'    => ['nullable', 'string', 'max:100'],
+            'penghasilan_ortu' => ['nullable', 'integer', 'min:0'],
+            'ipk'              => ['nullable', 'numeric', 'min:0', 'max:4'],
+            'prestasi'         => ['nullable', 'numeric', 'min:0', 'max:100'],
+            'keaktifan_org'    => ['nullable', 'numeric', 'min:0', 'max:100'],
+        ]);
+
+        // Update nama di tabel users
+        $user->update(['name' => $request->name]);
+
+        // Update atau buat data mahasiswa
+        Mahasiswa::updateOrCreate(
+            ['user_id' => $user->id],
+            $request->only([
+                'nim', 'prodi', 'angkatan', 'no_hp', 'alamat',
+                'nama_ayah', 'nama_ibu', 'pekerjaan_ayah', 'pekerjaan_ibu',
+                'penghasilan_ortu', 'ipk', 'prestasi', 'keaktifan_org',
+            ])
+        );
+
+        return redirect()->route('mahasiswa.profil.edit')
+            ->with('success', 'Profil berhasil diperbarui.');
     }
 }

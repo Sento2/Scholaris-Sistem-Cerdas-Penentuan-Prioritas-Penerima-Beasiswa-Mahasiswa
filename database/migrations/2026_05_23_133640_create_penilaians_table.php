@@ -17,6 +17,7 @@ return new class extends Migration
             $table->foreignId('kriteria_id')->constrained('kriterias')->onDelete('cascade');
             $table->float('nilai_asli');
             $table->float('nilai_normal')->nullable();
+            $table->float('nilai_bobot')->nullable();
             $table->timestamps();
         });
     }

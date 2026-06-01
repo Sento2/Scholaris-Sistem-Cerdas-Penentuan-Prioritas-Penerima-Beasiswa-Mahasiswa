@@ -23,9 +23,13 @@ class DosenController extends Controller
     {
         $dosen = Auth::user();
 
+        // Cari record dosen dari tabel dosens
+        $dosenRecord = \Illuminate\Support\Facades\DB::table('dosens')->where('user_id', $dosen->id)->first();
+        $dosenId = $dosenRecord ? $dosenRecord->id : null;
+
         // Ambil semua mahasiswa bimbingan beserta pengajuan terbaru
         $mahasiswaList = Mahasiswa::with(['user', 'pengajuanAktif'])
-            ->where('dosen_id', $dosen->id)
+            ->where('dosen_id', $dosenId)
             ->get();
 
         // Statistik ringkas untuk tampilan header
@@ -58,8 +62,11 @@ class DosenController extends Controller
         $pengajuan = Pengajuan::with(['mahasiswa.user'])
             ->find($pengajuanId);
 
+        $dosenRecord = \Illuminate\Support\Facades\DB::table('dosens')->where('user_id', $dosen->id)->first();
+        $dosenId = $dosenRecord ? $dosenRecord->id : null;
+
         // Pastikan mahasiswa ini bimbingan dosen yang sedang login
-        if (! $pengajuan || $pengajuan->mahasiswa->dosen_id !== $dosen->id) {
+        if (! $pengajuan || $pengajuan->mahasiswa->dosen_id !== $dosenId) {
             return redirect()->route('dosen.bimbingan')
                 ->with('error', 'Pengajuan tidak ditemukan atau bukan mahasiswa bimbingan Anda.');
         }
@@ -80,8 +87,11 @@ class DosenController extends Controller
         $dosen    = Auth::user();
         $pengajuan = Pengajuan::with('mahasiswa')->find($pengajuanId);
 
+        $dosenRecord = \Illuminate\Support\Facades\DB::table('dosens')->where('user_id', $dosen->id)->first();
+        $dosenId = $dosenRecord ? $dosenRecord->id : null;
+
         // Validasi kepemilikan
-        if (! $pengajuan || $pengajuan->mahasiswa->dosen_id !== $dosen->id) {
+        if (! $pengajuan || $pengajuan->mahasiswa->dosen_id !== $dosenId) {
             return redirect()->route('dosen.bimbingan')
                 ->with('error', 'Aksi tidak diizinkan.');
         }
@@ -120,10 +130,13 @@ class DosenController extends Controller
     {
         $dosen = Auth::user();
 
+        $dosenRecord = \Illuminate\Support\Facades\DB::table('dosens')->where('user_id', $dosen->id)->first();
+        $dosenId = $dosenRecord ? $dosenRecord->id : null;
+
         $mahasiswaList = Mahasiswa::with(['user', 'pengajuan' => fn($q) =>
             $q->whereNotNull('skor_saw')->orderBy('rank')
         ])
-            ->where('dosen_id', $dosen->id)
+            ->where('dosen_id', $dosenId)
             ->get();
 
         return view('dosen.laporan', compact('mahasiswaList', 'dosen'));

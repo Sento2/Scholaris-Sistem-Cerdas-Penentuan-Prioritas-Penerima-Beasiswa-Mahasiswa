@@ -1,100 +1,103 @@
-<nav x-data="{ open: false }" class="bg-white border-b border-gray-100">
-    <!-- Primary Navigation Menu -->
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex justify-between h-16">
-            <div class="flex">
-                <!-- Logo -->
-                <div class="shrink-0 flex items-center">
-                    <a href="{{ route('dashboard') }}">
-                        <x-application-logo class="block h-9 w-auto fill-current text-gray-800 dark:text-gray-200" />
-                    </a>
-                </div>
-
-                <!-- Navigation Links -->
-                <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                    <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
-                        {{ __('Dashboard') }}
-                    </x-nav-link>
-                </div>
-            </div>
-
-            <!-- Settings Dropdown -->
-            <div class="hidden sm:flex sm:items-center sm:ms-6">
-                <x-dropdown align="right" width="48">
-                    <x-slot name="trigger">
-                        <button class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 dark:text-gray-400 bg-white dark:bg-gray-800 hover:text-gray-700 dark:hover:text-gray-300 focus:outline-none transition ease-in-out duration-150">
-                            <div>{{ Auth::user()->name }}</div>
-
-                            <div class="ms-1">
-                                <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
-                                    <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
-                                </svg>
-                            </div>
-                        </button>
-                    </x-slot>
-
-                    <x-slot name="content">
-                        <x-dropdown-link :href="route('profile.edit')">
-                            {{ __('Profile') }}
-                        </x-dropdown-link>
-
-                        <!-- Authentication -->
-                        <form method="POST" action="{{ route('logout') }}">
-                            @csrf
-
-                            <x-dropdown-link :href="route('logout')"
-                                    onclick="event.preventDefault();
-                                                this.closest('form').submit();">
-                                {{ __('Log Out') }}
-                            </x-dropdown-link>
-                        </form>
-                    </x-slot>
-                </x-dropdown>
-            </div>
-
-            <!-- Hamburger -->
-            <div class="-me-2 flex items-center sm:hidden">
-                <button @click="open = ! open" class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 dark:text-gray-500 hover:text-gray-500 dark:hover:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-900 focus:outline-none focus:bg-gray-100 dark:focus:bg-gray-900 focus:text-gray-500 dark:focus:text-gray-400 transition duration-150 ease-in-out">
-                    <svg class="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
-                        <path :class="{'hidden': open, 'inline-flex': ! open }" class="inline-flex" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
-                        <path :class="{'hidden': ! open, 'inline-flex': open }" class="hidden" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                    </svg>
-                </button>
-            </div>
-        </div>
+<nav class="max-w-7xl mx-auto flex items-center justify-between px-6 md:px-10 py-4" x-data="{ mobileMenuOpen: false }">
+    <!-- Logo -->
+    <div class="flex items-center">
+        @php
+            $dashboardRoute = 'dashboard';
+            if (Auth::user()->isMahasiswa()) $dashboardRoute = 'mahasiswa.dashboard';
+            elseif (Auth::user()->isDosen()) $dashboardRoute = 'dosen.bimbingan'; // Dosen doesn't have a specific dashboard route, uses bimbingan
+            elseif (Auth::user()->isAdmin()) $dashboardRoute = 'admin.dashboard';
+        @endphp
+        <a href="{{ route($dashboardRoute) }}" class="text-xl font-extrabold text-emerald-700 tracking-tight cursor-pointer transform hover:scale-105 transition-transform">
+            Scholaris
+        </a>
     </div>
 
-    <!-- Responsive Navigation Menu -->
-    <div :class="{'block': open, 'hidden': ! open}" class="hidden sm:hidden">
-        <div class="pt-2 pb-3 space-y-1">
-            <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
-                {{ __('Dashboard') }}
-            </x-responsive-nav-link>
-        </div>
+    <!-- Links -->
+    <div class="hidden md:flex items-center space-x-8">
+        @if(Auth::user()->isMahasiswa())
+            <a href="{{ route('mahasiswa.dashboard') }}" class="text-sm font-semibold {{ request()->routeIs('mahasiswa.dashboard') ? 'text-emerald-700 border-b-2 border-emerald-600 pb-1.5 px-1' : 'text-gray-500 hover:text-gray-800 hover:border-gray-300 border-b-2 border-transparent pb-1.5 px-1 transition-all' }}">Beranda</a>
+            <a href="{{ route('mahasiswa.beasiswa') }}" class="text-sm font-semibold {{ request()->routeIs('mahasiswa.beasiswa') ? 'text-emerald-700 border-b-2 border-emerald-600 pb-1.5 px-1' : 'text-gray-500 hover:text-gray-800 hover:border-gray-300 border-b-2 border-transparent pb-1.5 px-1 transition-all' }}">Info Beasiswa</a>
+            <a href="{{ route('mahasiswa.daftar') }}" class="text-sm font-semibold {{ request()->routeIs('mahasiswa.daftar') ? 'text-emerald-700 border-b-2 border-emerald-600 pb-1.5 px-1' : 'text-gray-500 hover:text-gray-800 hover:border-gray-300 border-b-2 border-transparent pb-1.5 px-1 transition-all' }}">Daftar Beasiswa</a>
+            <a href="{{ route('mahasiswa.status') }}" class="text-sm font-semibold {{ request()->routeIs('mahasiswa.status') ? 'text-emerald-700 border-b-2 border-emerald-600 pb-1.5 px-1' : 'text-gray-500 hover:text-gray-800 hover:border-gray-300 border-b-2 border-transparent pb-1.5 px-1 transition-all' }}">Status</a>
+            <a href="{{ route('mahasiswa.skor') }}" class="text-sm font-semibold {{ request()->routeIs('mahasiswa.skor') ? 'text-emerald-700 border-b-2 border-emerald-600 pb-1.5 px-1' : 'text-gray-500 hover:text-gray-800 hover:border-gray-300 border-b-2 border-transparent pb-1.5 px-1 transition-all' }}">Skor SAW</a>
+        
+        @elseif(Auth::user()->isDosen())
+            <a href="{{ route('dosen.bimbingan') }}" class="text-sm font-semibold {{ request()->routeIs('dosen.bimbingan') ? 'text-emerald-700 border-b-2 border-emerald-600 pb-1.5 px-1' : 'text-gray-500 hover:text-gray-800 hover:border-gray-300 border-b-2 border-transparent pb-1.5 px-1 transition-all' }}">Mahasiswa Bimbingan</a>
+            <a href="{{ route('dosen.laporan') }}" class="text-sm font-semibold {{ request()->routeIs('dosen.laporan') ? 'text-emerald-700 border-b-2 border-emerald-600 pb-1.5 px-1' : 'text-gray-500 hover:text-gray-800 hover:border-gray-300 border-b-2 border-transparent pb-1.5 px-1 transition-all' }}">Laporan</a>
+        
+        @elseif(Auth::user()->isAdmin())
+            <a href="{{ route('admin.dashboard') }}" class="text-sm font-semibold {{ request()->routeIs('admin.dashboard') ? 'text-emerald-700 border-b-2 border-emerald-600 pb-1.5 px-1' : 'text-gray-500 hover:text-gray-800 hover:border-gray-300 border-b-2 border-transparent pb-1.5 px-1 transition-all' }}">Dashboard</a>
+            <a href="{{ route('admin.data') }}" class="text-sm font-semibold {{ request()->routeIs('admin.data') ? 'text-emerald-700 border-b-2 border-emerald-600 pb-1.5 px-1' : 'text-gray-500 hover:text-gray-800 hover:border-gray-300 border-b-2 border-transparent pb-1.5 px-1 transition-all' }}">Kelola Pengajuan</a>
+            <a href="{{ route('admin.bobot') }}" class="text-sm font-semibold {{ request()->routeIs('admin.bobot') ? 'text-emerald-700 border-b-2 border-emerald-600 pb-1.5 px-1' : 'text-gray-500 hover:text-gray-800 hover:border-gray-300 border-b-2 border-transparent pb-1.5 px-1 transition-all' }}">Bobot SAW</a>
+            <a href="{{ route('admin.ranking') }}" class="text-sm font-semibold {{ request()->routeIs('admin.ranking') ? 'text-emerald-700 border-b-2 border-emerald-600 pb-1.5 px-1' : 'text-gray-500 hover:text-gray-800 hover:border-gray-300 border-b-2 border-transparent pb-1.5 px-1 transition-all' }}">Ranking</a>
+            <a href="{{ route('admin.laporan') }}" class="text-sm font-semibold {{ request()->routeIs('admin.laporan') ? 'text-emerald-700 border-b-2 border-emerald-600 pb-1.5 px-1' : 'text-gray-500 hover:text-gray-800 hover:border-gray-300 border-b-2 border-transparent pb-1.5 px-1 transition-all' }}">Laporan</a>
+        @endif
+        
+        @if(Auth::user()->isMahasiswa())
+            <a href="{{ route('mahasiswa.profil.edit') }}" class="text-sm font-semibold {{ request()->routeIs('mahasiswa.profil.*') ? 'text-emerald-700 border-b-2 border-emerald-600 pb-1.5 px-1' : 'text-gray-500 hover:text-gray-800 hover:border-gray-300 border-b-2 border-transparent pb-1.5 px-1 transition-all' }}">Profil</a>
+        @else
+            <a href="{{ route('profile.edit') }}" class="text-sm font-semibold {{ request()->routeIs('profile.edit') ? 'text-emerald-700 border-b-2 border-emerald-600 pb-1.5 px-1' : 'text-gray-500 hover:text-gray-800 hover:border-gray-300 border-b-2 border-transparent pb-1.5 px-1 transition-all' }}">Profil</a>
+        @endif
+    </div>
 
-        <!-- Responsive Settings Options -->
-        <div class="pt-4 pb-1 border-t border-gray-200 dark:border-gray-600">
-            <div class="px-4">
-                <div class="font-medium text-base text-gray-800 dark:text-gray-200">{{ Auth::user()->name }}</div>
-                <div class="font-medium text-sm text-gray-500">{{ Auth::user()->email }}</div>
-            </div>
+    <!-- Profile & Actions -->
+    <div class="flex items-center space-x-5 relative">
+        <button class="text-gray-400 hover:text-emerald-600 transition-colors transform hover:rotate-12 hidden md:block">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path></svg>
+        </button>
+        
+        <div x-data="{ open: false }" class="relative">
+            <button @click="open = !open" class="flex items-center space-x-2 focus:outline-none">
+                <img src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->name) }}&color=059669&background=ecfdf5" alt="Avatar" class="w-9 h-9 rounded-full border border-gray-200 shadow-sm transform hover:scale-110 transition-transform">
+            </button>
 
-            <div class="mt-3 space-y-1">
-                <x-responsive-nav-link :href="route('profile.edit')">
-                    {{ __('Profile') }}
-                </x-responsive-nav-link>
-
-                <!-- Authentication -->
+            <!-- Dropdown -->
+            <div x-show="open" @click.away="open = false" x-cloak
+                 class="absolute right-0 top-12 mt-2 w-48 bg-white rounded-md shadow-lg py-1 border border-gray-100 z-50"
+                 x-transition:enter="transition ease-out duration-100"
+                 x-transition:enter-start="transform opacity-0 scale-95"
+                 x-transition:enter-end="transform opacity-100 scale-100"
+                 x-transition:leave="transition ease-in duration-75"
+                 x-transition:leave-start="transform opacity-100 scale-100"
+                 x-transition:leave-end="transform opacity-0 scale-95">
                 <form method="POST" action="{{ route('logout') }}">
                     @csrf
-
-                    <x-responsive-nav-link :href="route('logout')"
-                            onclick="event.preventDefault();
-                                        this.closest('form').submit();">
-                        {{ __('Log Out') }}
-                    </x-responsive-nav-link>
+                    <button type="submit" class="block w-full text-left px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-50 hover:text-emerald-700">Log Out</button>
                 </form>
             </div>
         </div>
+
+        <!-- Mobile Menu Toggle -->
+        <button @click="mobileMenuOpen = !mobileMenuOpen" class="md:hidden text-gray-400 hover:text-emerald-600 transition-colors focus:outline-none">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" x-show="!mobileMenuOpen"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" x-show="mobileMenuOpen" x-cloak><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+        </button>
+    </div>
+
+    <!-- Mobile Navigation (Absolute Dropdown) -->
+    <div x-show="mobileMenuOpen" x-cloak
+         class="absolute top-[72px] left-0 right-0 bg-white shadow-md border-b border-gray-100 py-2 px-4 z-40 md:hidden flex flex-col space-y-1">
+         
+        @if(Auth::user()->isMahasiswa())
+            <a href="{{ route('mahasiswa.dashboard') }}" class="text-sm font-semibold px-2 py-3 rounded-md {{ request()->routeIs('mahasiswa.dashboard') ? 'bg-emerald-50 text-emerald-700' : 'text-gray-700 hover:bg-gray-50' }}">Beranda</a>
+            <a href="{{ route('mahasiswa.beasiswa') }}" class="text-sm font-semibold px-2 py-3 rounded-md {{ request()->routeIs('mahasiswa.beasiswa') ? 'bg-emerald-50 text-emerald-700' : 'text-gray-700 hover:bg-gray-50' }}">Beasiswa</a>
+            <a href="{{ route('mahasiswa.daftar') }}" class="text-sm font-semibold px-2 py-3 rounded-md {{ request()->routeIs('mahasiswa.daftar') ? 'bg-emerald-50 text-emerald-700' : 'text-gray-700 hover:bg-gray-50' }}">Daftar Beasiswa</a>
+            <a href="{{ route('mahasiswa.status') }}" class="text-sm font-semibold px-2 py-3 rounded-md {{ request()->routeIs('mahasiswa.status') ? 'bg-emerald-50 text-emerald-700' : 'text-gray-700 hover:bg-gray-50' }}">Status</a>
+            <a href="{{ route('mahasiswa.skor') }}" class="text-sm font-semibold px-2 py-3 rounded-md {{ request()->routeIs('mahasiswa.skor') ? 'bg-emerald-50 text-emerald-700' : 'text-gray-700 hover:bg-gray-50' }}">Skor SAW</a>
+        @elseif(Auth::user()->isDosen())
+            <a href="{{ route('dosen.bimbingan') }}" class="text-sm font-semibold px-2 py-3 rounded-md {{ request()->routeIs('dosen.bimbingan') ? 'bg-emerald-50 text-emerald-700' : 'text-gray-700 hover:bg-gray-50' }}">Mahasiswa Bimbingan</a>
+            <a href="{{ route('dosen.laporan') }}" class="text-sm font-semibold px-2 py-3 rounded-md {{ request()->routeIs('dosen.laporan') ? 'bg-emerald-50 text-emerald-700' : 'text-gray-700 hover:bg-gray-50' }}">Laporan</a>
+        @elseif(Auth::user()->isAdmin())
+            <a href="{{ route('admin.dashboard') }}" class="text-sm font-semibold px-2 py-3 rounded-md {{ request()->routeIs('admin.dashboard') ? 'bg-emerald-50 text-emerald-700' : 'text-gray-700 hover:bg-gray-50' }}">Dashboard</a>
+            <a href="{{ route('admin.data') }}" class="text-sm font-semibold px-2 py-3 rounded-md {{ request()->routeIs('admin.data') ? 'bg-emerald-50 text-emerald-700' : 'text-gray-700 hover:bg-gray-50' }}">Kelola Pengajuan</a>
+            <a href="{{ route('admin.bobot') }}" class="text-sm font-semibold px-2 py-3 rounded-md {{ request()->routeIs('admin.bobot') ? 'bg-emerald-50 text-emerald-700' : 'text-gray-700 hover:bg-gray-50' }}">Bobot SAW</a>
+            <a href="{{ route('admin.ranking') }}" class="text-sm font-semibold px-2 py-3 rounded-md {{ request()->routeIs('admin.ranking') ? 'bg-emerald-50 text-emerald-700' : 'text-gray-700 hover:bg-gray-50' }}">Ranking</a>
+            <a href="{{ route('admin.laporan') }}" class="text-sm font-semibold px-2 py-3 rounded-md {{ request()->routeIs('admin.laporan') ? 'bg-emerald-50 text-emerald-700' : 'text-gray-700 hover:bg-gray-50' }}">Laporan</a>
+        @endif
+        @if(Auth::user()->isMahasiswa())
+            <a href="{{ route('mahasiswa.profil.edit') }}" class="text-sm font-semibold px-2 py-3 rounded-md {{ request()->routeIs('mahasiswa.profil.*') ? 'bg-emerald-50 text-emerald-700' : 'text-gray-700 hover:bg-gray-50' }}">Profil</a>
+        @else
+            <a href="{{ route('profile.edit') }}" class="text-sm font-semibold px-2 py-3 rounded-md {{ request()->routeIs('profile.edit') ? 'bg-emerald-50 text-emerald-700' : 'text-gray-700 hover:bg-gray-50' }}">Profil</a>
+        @endif
     </div>
 </nav>
