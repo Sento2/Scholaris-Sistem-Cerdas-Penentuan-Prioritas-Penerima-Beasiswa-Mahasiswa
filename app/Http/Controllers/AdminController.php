@@ -7,6 +7,12 @@ use App\Models\Mahasiswa;
 use App\Models\Pengajuan;
 use App\Models\User;
 use App\services\SAWService;
+use App\Exports\PenerimaBeasiswaExport;
+use App\Http\Requests\SimpanBobotRequest;
+use App\Http\Requests\TambahKriteriaRequest;
+use App\Http\Requests\TetapkanHasilRequest;
+use Barryvdh\DomPDF\Facade\Pdf;
+use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -98,11 +104,8 @@ class AdminController extends Controller
     /**
      * Tetapkan keputusan final (terima/tolak) berdasarkan ranking dan kuota.
      */
-    public function tetapkanHasil(Request $request): RedirectResponse
+    public function tetapkanHasil(TetapkanHasilRequest $request): RedirectResponse
     {
-        $request->validate([
-            'kuota' => ['required', 'integer', 'min:1'],
-        ]);
 
         $kuota = (int) $request->kuota;
 
@@ -142,22 +145,8 @@ class AdminController extends Controller
     /**
      * Simpan perubahan bobot kriteria.
      */
-    public function simpanBobot(Request $request): RedirectResponse
+    public function simpanBobot(SimpanBobotRequest $request): RedirectResponse
     {
-        $request->validate([
-            'kriteria'          => ['required', 'array'],
-            'kriteria.*.id'     => ['required', 'exists:kriterias,id'],
-            'kriteria.*.bobot'  => ['required', 'numeric', 'min:0', 'max:100'],
-            'kriteria.*.jenis'  => ['required', 'in:benefit,cost'],
-        ]);
-
-        // Validasi: total bobot harus tepat 100%
-        $totalBobot = collect($request->kriteria)->sum('bobot');
-        if (abs($totalBobot - 100) > 0.01) {
-            return back()->withErrors([
-                'bobot' => "Total bobot harus 100%. Jumlah saat ini: {$totalBobot}%."
-            ])->withInput();
-        }
 
         // Simpan tiap kriteria
         foreach ($request->kriteria as $item) {
@@ -174,15 +163,8 @@ class AdminController extends Controller
     /**
      * Tambah kriteria baru.
      */
-    public function tambahKriteria(Request $request): RedirectResponse
+    public function tambahKriteria(TambahKriteriaRequest $request): RedirectResponse
     {
-        $request->validate([
-            'nama'       => ['required', 'string', 'max:100'],
-            'kode'       => ['required', 'string', 'max:30', 'unique:kriterias,kode'],
-            'bobot'      => ['required', 'numeric', 'min:0', 'max:100'],
-            'jenis'      => ['required', 'in:benefit,cost'],
-            'keterangan' => ['nullable', 'string'],
-        ]);
 
         Kriteria::create($request->only('nama', 'kode', 'bobot', 'jenis', 'keterangan'));
 
@@ -280,5 +262,27 @@ class AdminController extends Controller
         return view('admin.laporan', compact(
             'perProdi', 'perAngkatan', 'totalStats', 'penerima'
         ));
+    }
+
+    /**
+     * Export laporan penerima beasiswa ke format PDF.
+     */
+    public function exportPdf()
+    {
+        $penerima = Pengajuan::with('mahasiswa.user')
+            ->where('status', Pengajuan::STATUS_DITERIMA)
+            ->orderBy('rank')
+            ->get();
+
+        $pdf = Pdf::loadView('admin.exports.laporan-pdf', compact('penerima'));
+        return $pdf->download('laporan-penerima-beasiswa.pdf');
+    }
+
+    /**
+     * Export laporan penerima beasiswa ke format Excel.
+     */
+    public function exportExcel()
+    {
+        return Excel::download(new PenerimaBeasiswaExport, 'laporan-penerima-beasiswa.xlsx');
     }
 }

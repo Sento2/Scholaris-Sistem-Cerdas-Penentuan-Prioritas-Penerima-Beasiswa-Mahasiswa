@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\ProsesVerifikasiRequest;
 use App\Models\Mahasiswa;
 use App\Models\Pengajuan;
 use Illuminate\Http\RedirectResponse;
@@ -22,10 +23,7 @@ class DosenController extends Controller
     public function bimbingan(): View
     {
         $dosen = Auth::user();
-
-        // Cari record dosen dari tabel dosens
-        $dosenRecord = \Illuminate\Support\Facades\DB::table('dosens')->where('user_id', $dosen->id)->first();
-        $dosenId = $dosenRecord ? $dosenRecord->id : null;
+        $dosenId = $dosen->dosen?->id;
 
         // Ambil semua mahasiswa bimbingan beserta pengajuan terbaru
         $mahasiswaList = Mahasiswa::with(['user', 'pengajuanAktif'])
@@ -62,8 +60,7 @@ class DosenController extends Controller
         $pengajuan = Pengajuan::with(['mahasiswa.user'])
             ->find($pengajuanId);
 
-        $dosenRecord = \Illuminate\Support\Facades\DB::table('dosens')->where('user_id', $dosen->id)->first();
-        $dosenId = $dosenRecord ? $dosenRecord->id : null;
+        $dosenId = $dosen->dosen?->id;
 
         // Pastikan mahasiswa ini bimbingan dosen yang sedang login
         if (! $pengajuan || $pengajuan->mahasiswa->dosen_id !== $dosenId) {
@@ -77,18 +74,12 @@ class DosenController extends Controller
     /**
      * Proses verifikasi: setujui atau tolak pengajuan mahasiswa.
      */
-    public function prosesVerifikasi(Request $request, int $pengajuanId): RedirectResponse
+    public function prosesVerifikasi(ProsesVerifikasiRequest $request, int $pengajuanId): RedirectResponse
     {
-        $request->validate([
-            'keputusan'       => ['required', 'in:setuju,tolak'],
-            'catatan_dosen'   => ['nullable', 'string', 'max:500'],
-        ]);
-
         $dosen    = Auth::user();
         $pengajuan = Pengajuan::with('mahasiswa')->find($pengajuanId);
 
-        $dosenRecord = \Illuminate\Support\Facades\DB::table('dosens')->where('user_id', $dosen->id)->first();
-        $dosenId = $dosenRecord ? $dosenRecord->id : null;
+        $dosenId = $dosen->dosen?->id;
 
         // Validasi kepemilikan
         if (! $pengajuan || $pengajuan->mahasiswa->dosen_id !== $dosenId) {
@@ -129,9 +120,7 @@ class DosenController extends Controller
     public function laporan(): View
     {
         $dosen = Auth::user();
-
-        $dosenRecord = \Illuminate\Support\Facades\DB::table('dosens')->where('user_id', $dosen->id)->first();
-        $dosenId = $dosenRecord ? $dosenRecord->id : null;
+        $dosenId = $dosen->dosen?->id;
 
         $mahasiswaList = Mahasiswa::with(['user', 'pengajuan' => fn($q) =>
             $q->whereNotNull('skor_saw')->orderBy('rank')

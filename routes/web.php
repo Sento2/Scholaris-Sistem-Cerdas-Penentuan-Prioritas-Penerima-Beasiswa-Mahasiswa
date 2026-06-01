@@ -87,5 +87,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
             Route::delete('/bobot/{id}',        [AdminController::class, 'hapusKriteria'])->name('bobot.hapus');
             Route::get('/data',                 [AdminController::class, 'data'])->name('data');
             Route::get('/laporan',              [AdminController::class, 'laporan'])->name('laporan');
-        });
+            Route::get('/laporan/pdf',          [AdminController::class, 'exportPdf'])->name('laporan.pdf');
+            Route::get('/laporan/excel',        [AdminController::class, 'exportExcel'])->name('laporan.excel');        });
 });

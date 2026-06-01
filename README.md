@@ -22,13 +22,14 @@ Aplikasi ini memiliki 3 level pengguna (Role) dengan hak akses dan fitur yang be
 ### 2. 👨‍🏫 Dosen Pembimbing
 * **Verifikasi Dokumen**: Melihat daftar mahasiswa bimbingan yang mengajukan beasiswa, lengkap dengan *live search* dan filter.
 * **Review Pengajuan**: Tampilan *split-screen* untuk meninjau kecocokan data kriteria yang diinput dengan dokumen fisik yang diunggah.
+* **Penolakan Terstruktur**: Fitur form interaktif yang mewajibkan dosen mengisi catatan/alasan spesifik apabila menolak pengajuan mahasiswa.
 * **Laporan Eksekutif**: *Dashboard* analitik yang menampilkan ringkasan kelulusan mahasiswa bimbingan dengan visualisasi progres dan skor SAW.
 
 ### 3. 👨‍💻 Administrator (Jurusan/Kampus)
 * **Manajemen Pendaftar**: Mengelola seluruh data mahasiswa yang mendaftar beasiswa di tingkat fakultas/kampus.
 * **Eksekusi Algoritma SAW**: Tombol pintar untuk memicu perhitungan dan pembobotan seluruh pendaftar secara otomatis.
 * **Manajemen Kriteria & Bobot**: Menambah, mengubah, atau menghapus kriteria penilaian (IPK, Penghasilan Orang Tua, Prestasi, Keaktifan) serta mengatur tipe (*Benefit/Cost*).
-* **Export Laporan (PDF/Excel)**: Mencetak hasil akhir pemeringkatan beasiswa sebagai dokumen resmi untuk pencairan dana.
+* **Export Laporan (PDF/Excel)**: Mengekspor laporan final dalam bentuk *Spreadsheet* (Excel) yang rapi dan Surat Keputusan resmi ber-kop universitas (PDF) menggunakan `dompdf` dan `laravel-excel`.
 
 ---
 
@@ -130,6 +131,15 @@ Sistem SCHOLARIS secara cerdas:
 2. Melakukan **Normalisasi** matriks keputusan (berdasarkan sifat kriteria *Benefit* atau *Cost*).
 3. Melakukan **Pembobotan** terhadap hasil normalisasi.
 4. Menghasilkan **Skor Akhir (Preferensi)** untuk melakukan pemeringkatan secara *real-time*.
+
+---
+
+## 🧹 Arsitektur Clean Code
+
+Aplikasi ini dibangun dengan mengedepankan prinsip *best practices* Laravel (Clean Code & Solid Principles):
+* **Form Request Injection:** Menghindari *Fat Controllers*. Semua logika validasi input ditempatkan terpisah pada kelas khusus (seperti `StorePengajuanRequest`, `ProsesVerifikasiRequest`, dll), membuat baris kode *controller* menjadi sangat ramping dan murni hanya menangani alur bisnis utama.
+* **Eloquent Relationships:** Menghindari kueri manual (seperti `DB::table()`) yang rentan *bug*. Semua data yang saling terhubung (contoh: `User` ke `Dosen` atau `Mahasiswa`) sudah diikat kuat menggunakan fitur relasi model bawaan Laravel Eloquent ORM.
+* **Service Pattern:** Logika kompleks matematika untuk algoritma SAW dipisahkan secara elegan ke dalam kelas khusus yaitu `SAWService`, menjaga seluruh struktur tetap *scalable* (mudah dikembangkan).
 
 ---
 

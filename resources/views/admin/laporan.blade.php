@@ -15,10 +15,16 @@
             <h2 class="text-2xl font-bold text-gray-800">Laporan Penerimaan Beasiswa</h2>
             <p class="text-gray-500 mt-1 text-sm font-medium">Ringkasan statistik dan rekapitulasi data pendaftar.</p>
         </div>
-        <button id="btn-cetak-laporan" onclick="window.print()" class="inline-flex justify-center items-center px-6 py-3 bg-white border border-gray-200 text-gray-700 rounded-xl font-bold text-sm shadow-sm hover:bg-gray-50 hover:shadow transition-all group">
-            <svg class="w-5 h-5 mr-2 text-gray-400 group-hover:text-emerald-600 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
-            Cetak Laporan
-        </button>
+        <div class="flex items-center gap-3">
+            <a href="{{ route('admin.laporan.excel') }}" class="inline-flex justify-center items-center px-5 py-2.5 bg-white border border-emerald-200 text-emerald-700 rounded-xl font-bold text-sm shadow-sm hover:bg-emerald-50 hover:shadow transition-all group">
+                <svg class="w-5 h-5 mr-2 text-emerald-500 group-hover:text-emerald-600 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                Unduh Excel
+            </a>
+            <a href="{{ route('admin.laporan.pdf') }}" class="inline-flex justify-center items-center px-5 py-2.5 bg-red-600 border border-transparent text-white rounded-xl font-bold text-sm shadow-sm hover:bg-red-700 hover:shadow transition-all group">
+                <svg class="w-5 h-5 mr-2 text-red-200 group-hover:text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                Unduh PDF
+            </a>
+        </div>
     </div>
 
     <!-- STATS CARDS -->

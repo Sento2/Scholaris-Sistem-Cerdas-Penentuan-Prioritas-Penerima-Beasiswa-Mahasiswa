@@ -2,8 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StorePengajuanRequest;
+use App\Http\Requests\UpdateProfilRequest;
 use App\Models\Mahasiswa;
 use App\Models\Pengajuan;
+use App\Models\User;
 use App\services\SAWService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -15,6 +18,15 @@ class MahasiswaController extends Controller
 {
     public function __construct(protected SAWService $sawService) {}
 
+    private function currentUser(): User
+    {
+        $user = Auth::user();
+
+        abort_unless($user instanceof User, 403);
+
+        return $user;
+    }
+
     // -------------------------------------------------------
     //  DASHBOARD MAHASISWA
     // -------------------------------------------------------
@@ -25,7 +37,7 @@ class MahasiswaController extends Controller
      */
     public function dashboard(): View
     {
-        $user      = Auth::user();
+        $user      = $this->currentUser();
         $mahasiswa = $user->mahasiswa;
         $pengajuan = $mahasiswa
             ? Pengajuan::with('penilaian.kriteria')
@@ -55,7 +67,7 @@ class MahasiswaController extends Controller
      */
     public function formPengajuan(): View|RedirectResponse
     {
-        $user      = Auth::user();
+        $user      = $this->currentUser();
         $mahasiswa = $user->mahasiswa;
         $pengajuanAktif = false;
 
@@ -72,29 +84,10 @@ class MahasiswaController extends Controller
     /**
      * Simpan pengajuan baru ke database.
      */
-    public function simpanPengajuan(Request $request): RedirectResponse
+    public function simpanPengajuan(StorePengajuanRequest $request): RedirectResponse
     {
-        $request->validate([
-            // Data profil mahasiswa
-            'nim'              => ['required', 'string', 'max:20'],
-            'prodi'            => ['required', 'string', 'max:100'],
-            'angkatan'         => ['required', 'integer', 'min:2000', 'max:2099'],
-            'no_hp'            => ['required', 'string', 'max:20'],
-            'alamat'           => ['required', 'string'],
-            'penghasilan_ortu' => ['required', 'integer', 'min:0'],
-            'ipk'              => ['required', 'numeric', 'min:0', 'max:4'],
-            'prestasi'         => ['required', 'numeric', 'min:0', 'max:100'],
-            'keaktifan_org'    => ['required', 'numeric', 'min:0', 'max:100'],
-            // Dokumen wajib
-            'dokumen_ktp'      => ['required', 'file', 'mimes:pdf,jpg,png', 'max:2048'],
-            'dokumen_kk'       => ['required', 'file', 'mimes:pdf,jpg,png', 'max:2048'],
-            'dokumen_sktm'     => ['required', 'file', 'mimes:pdf,jpg,png', 'max:2048'],
-            'dokumen_transkrip'=> ['required', 'file', 'mimes:pdf,jpg,png', 'max:2048'],
-            // Dokumen opsional
-            'dokumen_prestasi' => ['nullable', 'file', 'mimes:pdf,jpg,png', 'max:2048'],
-        ]);
 
-        $user = Auth::user();
+        $user = $this->currentUser();
 
         // Buat atau perbarui profil Mahasiswa
         $mahasiswa = Mahasiswa::updateOrCreate(
@@ -139,7 +132,7 @@ class MahasiswaController extends Controller
      */
     public function skorSaya(): View|RedirectResponse
     {
-        $user      = Auth::user();
+        $user      = $this->currentUser();
         $mahasiswa = $user->mahasiswa;
 
         if (! $mahasiswa) {
@@ -173,7 +166,7 @@ class MahasiswaController extends Controller
      */
     public function status(): View
     {
-        $user      = Auth::user();
+        $user      = $this->currentUser();
         $mahasiswa = $user->mahasiswa;
 
         $pengajuan = $mahasiswa
@@ -192,7 +185,7 @@ class MahasiswaController extends Controller
      */
     public function editProfil(): View
     {
-        $user      = Auth::user();
+        $user      = $this->currentUser();
         $mahasiswa = $user->mahasiswa;
 
         return view('mahasiswa.profil', compact('user', 'mahasiswa'));
@@ -201,26 +194,9 @@ class MahasiswaController extends Controller
     /**
      * Simpan perubahan profil mahasiswa.
      */
-    public function updateProfil(Request $request): RedirectResponse
+    public function updateProfil(UpdateProfilRequest $request): RedirectResponse
     {
-        $user = Auth::user();
-
-        $request->validate([
-            'name'             => ['required', 'string', 'max:255'],
-            'nim'              => ['required', 'string', 'max:20'],
-            'prodi'            => ['required', 'string', 'max:100'],
-            'angkatan'         => ['required', 'integer', 'min:2000', 'max:2099'],
-            'no_hp'            => ['nullable', 'string', 'max:20'],
-            'alamat'           => ['nullable', 'string', 'max:500'],
-            'nama_ayah'        => ['nullable', 'string', 'max:100'],
-            'nama_ibu'         => ['nullable', 'string', 'max:100'],
-            'pekerjaan_ayah'   => ['nullable', 'string', 'max:100'],
-            'pekerjaan_ibu'    => ['nullable', 'string', 'max:100'],
-            'penghasilan_ortu' => ['nullable', 'integer', 'min:0'],
-            'ipk'              => ['nullable', 'numeric', 'min:0', 'max:4'],
-            'prestasi'         => ['nullable', 'numeric', 'min:0', 'max:100'],
-            'keaktifan_org'    => ['nullable', 'numeric', 'min:0', 'max:100'],
-        ]);
+        $user = $this->currentUser();
 
         // Update nama di tabel users
         $user->update(['name' => $request->name]);
