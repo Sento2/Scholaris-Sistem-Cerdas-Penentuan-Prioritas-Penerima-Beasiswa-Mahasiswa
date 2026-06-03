@@ -11,6 +11,7 @@ use App\Exports\PenerimaBeasiswaExport;
 use App\Http\Requests\SimpanBobotRequest;
 use App\Http\Requests\TambahKriteriaRequest;
 use App\Http\Requests\TetapkanHasilRequest;
+use App\Notifications\StatusPengajuanNotification;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Http\RedirectResponse;
@@ -110,17 +111,26 @@ class AdminController extends Controller
         $kuota = (int) $request->kuota;
 
         // Ambil semua yang sudah dihitung, urutkan rank
-        $semuaPengajuan = Pengajuan::whereNotNull('rank')
+        $semuaPengajuan = Pengajuan::with('mahasiswa.user')
+            ->whereNotNull('rank')
             ->orderBy('rank')
             ->get();
 
         foreach ($semuaPengajuan as $idx => $pengajuan) {
+            $isDiterima = $idx < $kuota;
+            $statusBaru = $isDiterima ? Pengajuan::STATUS_DITERIMA : Pengajuan::STATUS_DITOLAK;
+
             $pengajuan->update([
-                'status'         => ($idx < $kuota)
-                    ? Pengajuan::STATUS_DITERIMA
-                    : Pengajuan::STATUS_DITOLAK,
+                'status'         => $statusBaru,
                 'diputuskan_at'  => now(),
             ]);
+
+            $jenisNotif = $isDiterima ? 'success' : 'danger';
+            $pesanNotif = $isDiterima
+                ? 'Selamat! Pengajuan Beasiswa Anda telah DITERIMA.'
+                : 'Mohon Maaf, Pengajuan Beasiswa Anda DITOLAK (Batas Kuota / Peringkat).';
+                
+            $pengajuan->mahasiswa->user->notify(new StatusPengajuanNotification($statusBaru, $pesanNotif, $jenisNotif));
         }
 
         return redirect()->route('admin.ranking')

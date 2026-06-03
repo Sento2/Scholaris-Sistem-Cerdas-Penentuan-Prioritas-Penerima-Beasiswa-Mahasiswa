@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\ProsesVerifikasiRequest;
 use App\Models\Mahasiswa;
 use App\Models\Pengajuan;
+use App\Notifications\StatusPengajuanNotification;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -102,6 +103,12 @@ class DosenController extends Controller
             'catatan_dosen'   => $request->catatan_dosen,
             'diverifikasi_at' => now(),
         ]);
+
+        $jenisNotif = $request->keputusan === 'setuju' ? 'info' : 'danger';
+        $pesanNotif = $request->keputusan === 'setuju' 
+            ? 'Pengajuan Anda telah diverifikasi oleh Dosen Pembimbing dan menunggu seleksi SAW.' 
+            : 'Pengajuan Anda DITOLAK oleh Dosen Pembimbing. Catatan: ' . ($request->catatan_dosen ?? '-');
+        $pengajuan->mahasiswa->user->notify(new StatusPengajuanNotification($statusBaru, $pesanNotif, $jenisNotif));
 
         $pesan = $request->keputusan === 'setuju'
             ? 'Pengajuan berhasil diverifikasi dan siap untuk dihitung SAW.'

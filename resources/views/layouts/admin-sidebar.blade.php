@@ -4,7 +4,7 @@
         <div class="h-20 flex items-center px-8">
             <a href="{{ route('admin.dashboard') }}" class="flex flex-col">
                 <span class="text-2xl font-extrabold text-[#0f172a] tracking-tight">Scholaris</span>
-                <span class="text-[10px] uppercase tracking-wider font-bold text-gray-500">Sistem Rekomendasi</span>
+                <span class="text-[9px] uppercase tracking-wider font-bold text-gray-500">Sistem Cerdas Rekomendasi Beasiswa</span>
             </a>
         </div>
 

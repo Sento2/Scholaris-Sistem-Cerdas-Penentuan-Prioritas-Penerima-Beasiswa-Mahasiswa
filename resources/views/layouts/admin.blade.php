@@ -166,10 +166,42 @@
                 </div>
 
 
-                <!-- Help Button -->
-                <button class="w-10 h-10 rounded-full bg-gray-50 border border-gray-100 flex items-center justify-center text-gray-400 hover:text-emerald-600 transition-colors hidden md:flex">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                </button>
+                <!-- Notification Bell -->
+                <div x-data="{ notifOpen: false }" class="relative">
+                    <button @click="notifOpen = !notifOpen" class="w-10 h-10 rounded-full bg-gray-50 border border-gray-100 flex items-center justify-center text-gray-400 hover:text-emerald-600 transition-colors relative">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path></svg>
+                        @if(Auth::user()->unreadNotifications->count() > 0)
+                            <span class="absolute top-0 right-0 inline-flex items-center justify-center w-4 h-4 text-[10px] font-bold leading-none text-white bg-red-500 rounded-full border-2 border-white">{{ Auth::user()->unreadNotifications->count() }}</span>
+                        @endif
+                    </button>
+                    <!-- Dropdown Content -->
+                    <div x-show="notifOpen" @click.away="notifOpen = false" x-cloak
+                         class="absolute right-0 top-12 mt-2 w-80 bg-white rounded-xl shadow-lg border border-gray-100 z-50 overflow-hidden"
+                         x-transition:enter="transition ease-out duration-100"
+                         x-transition:enter-start="transform opacity-0 scale-95"
+                         x-transition:enter-end="transform opacity-100 scale-100">
+                        <div class="px-4 py-3 bg-gray-50 border-b border-gray-100 flex justify-between items-center">
+                            <span class="text-sm font-bold text-gray-700">Notifikasi</span>
+                            @if(Auth::user()->unreadNotifications->count() > 0)
+                                <a href="{{ route('notifications.readAll') }}" class="text-[11px] font-medium text-emerald-600 hover:text-emerald-800">Tandai dibaca</a>
+                            @endif
+                        </div>
+                        <div class="max-h-72 overflow-y-auto">
+                            @forelse(Auth::user()->unreadNotifications as $notification)
+                                <a href="{{ route('notifications.read', $notification->id) }}" class="block px-4 py-3 border-b border-gray-50 hover:bg-gray-50 transition-colors">
+                                    <div class="flex items-start">
+                                        <div class="flex-1">
+                                            <p class="text-xs text-gray-800 font-medium">{{ $notification->data['pesan'] ?? 'Notifikasi baru' }}</p>
+                                            <p class="text-[10px] text-gray-400 mt-1">{{ $notification->created_at->diffForHumans() }}</p>
+                                        </div>
+                                    </div>
+                                </a>
+                            @empty
+                                <div class="px-4 py-8 text-center text-gray-400 text-sm">Belum ada notifikasi.</div>
+                            @endforelse
+                        </div>
+                    </div>
+                </div>
 
                 <!-- Profile Dropdown -->
                 <div x-data="{ open: false }" class="relative">
@@ -212,5 +244,8 @@
 
     </div>
 
+    <!-- ApexCharts CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+    @stack('scripts')
 </body>
 </html>

@@ -81,25 +81,8 @@
             <div class="px-8 py-6 border-b border-gray-100 bg-gray-50/50">
                 <h3 class="text-lg font-bold text-gray-800">Penerima Berdasarkan Prodi</h3>
             </div>
-            <div class="p-2">
-                <table class="w-full text-left">
-                    <tbody class="divide-y divide-gray-50 text-sm">
-                        @forelse ($perProdi ?? [] as $prodi => $stats)
-                            <tr class="hover:bg-gray-50 transition-colors">
-                                <td class="px-6 py-4 font-bold text-gray-700">{{ $prodi ?: 'Tidak Diketahui' }}</td>
-                                <td class="px-6 py-4 text-right">
-                                    <span class="text-emerald-600 font-black text-lg">{{ $stats['diterima'] ?? 0 }}</span>
-                                    <span class="text-gray-300 mx-1">/</span>
-                                    <span class="text-gray-500 font-medium">{{ $stats['total'] ?? 0 }} Pendaftar</span>
-                                </td>
-                            </tr>
-                        @empty
-                            <tr>
-                                <td colspan="2" class="px-6 py-8 text-center text-gray-500 font-medium">Tidak ada data.</td>
-                            </tr>
-                        @endforelse
-                    </tbody>
-                </table>
+            <div class="p-6 flex justify-center">
+                <div id="chart-prodi" class="w-full max-w-sm"></div>
             </div>
         </div>
 
@@ -108,24 +91,8 @@
             <div class="px-8 py-6 border-b border-gray-100 bg-gray-50/50">
                 <h3 class="text-lg font-bold text-gray-800">Pendaftar Berdasarkan Angkatan</h3>
             </div>
-            <div class="p-2">
-                <table class="w-full text-left">
-                    <tbody class="divide-y divide-gray-50 text-sm">
-                        @forelse ($perAngkatan ?? [] as $angkatan => $stats)
-                            <tr class="hover:bg-gray-50 transition-colors">
-                                <td class="px-6 py-4 font-bold text-gray-700">Angkatan {{ $angkatan ?: 'Tidak Diketahui' }}</td>
-                                <td class="px-6 py-4 text-right">
-                                    <span class="text-gray-800 font-black text-lg">{{ $stats['total'] ?? 0 }}</span>
-                                    <span class="text-gray-500 font-medium ml-1">Pendaftar</span>
-                                </td>
-                            </tr>
-                        @empty
-                            <tr>
-                                <td colspan="2" class="px-6 py-8 text-center text-gray-500 font-medium">Tidak ada data.</td>
-                            </tr>
-                        @endforelse
-                    </tbody>
-                </table>
+            <div class="p-6">
+                <div id="chart-angkatan" class="w-full"></div>
             </div>
         </div>
     </div>
@@ -186,4 +153,84 @@
             </table>
         </div>
     </div>
+
+    @push('scripts')
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Data Setup
+            const prodiLabels = {!! json_encode(collect($perProdi)->map(fn($item) => $item->prodi ?: 'Tidak Diketahui')->values()) !!};
+            const prodiData = {!! json_encode(collect($perProdi)->map(fn($item) => (int)$item->total)->values()) !!};
+            
+            const angkatanLabels = {!! json_encode(collect($perAngkatan)->map(fn($item) => 'Angkatan ' . ($item->angkatan ?: '?'))->values()) !!};
+            const angkatanData = {!! json_encode(collect($perAngkatan)->map(fn($item) => (int)$item->total)->values()) !!};
+
+            // Donut Chart - Prodi
+            if(document.getElementById('chart-prodi')) {
+                const prodiOptions = {
+                    series: prodiData,
+                    chart: {
+                        type: 'donut',
+                        height: 350,
+                        fontFamily: 'inherit'
+                    },
+                    labels: prodiLabels,
+                    colors: ['#059669', '#3b82f6', '#8b5cf6', '#f59e0b', '#ec4899', '#64748b'],
+                    dataLabels: { enabled: false },
+                    plotOptions: {
+                        pie: {
+                            donut: {
+                                size: '75%',
+                                labels: {
+                                    show: true,
+                                    name: { fontSize: '14px', color: '#64748b' },
+                                    value: { fontSize: '24px', fontWeight: 800, color: '#1e293b' },
+                                    total: { show: true, label: 'Pendaftar' }
+                                }
+                            }
+                        }
+                    },
+                    legend: { position: 'bottom' },
+                    stroke: { show: false }
+                };
+                new ApexCharts(document.querySelector("#chart-prodi"), prodiOptions).render();
+            }
+
+            // Bar Chart - Angkatan
+            if(document.getElementById('chart-angkatan')) {
+                const angkatanOptions = {
+                    series: [{
+                        name: 'Jumlah Pendaftar',
+                        data: angkatanData
+                    }],
+                    chart: {
+                        type: 'bar',
+                        height: 350,
+                        toolbar: { show: false },
+                        fontFamily: 'inherit'
+                    },
+                    colors: ['#059669'],
+                    plotOptions: {
+                        bar: {
+                            borderRadius: 6,
+                            columnWidth: '45%',
+                            distributed: true,
+                        }
+                    },
+                    dataLabels: { enabled: false },
+                    legend: { show: false },
+                    xaxis: {
+                        categories: angkatanLabels,
+                        axisBorder: { show: false },
+                        axisTicks: { show: false }
+                    },
+                    yaxis: {
+                        labels: { formatter: (value) => Math.round(value) }
+                    },
+                    grid: { strokeDashArray: 4 }
+                };
+                new ApexCharts(document.querySelector("#chart-angkatan"), angkatanOptions).render();
+            }
+        });
+    </script>
+    @endpush
 </x-admin-layout>
