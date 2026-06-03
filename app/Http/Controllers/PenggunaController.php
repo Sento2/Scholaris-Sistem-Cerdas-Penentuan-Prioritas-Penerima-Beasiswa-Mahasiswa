@@ -4,13 +4,24 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use App\Models\Dosen;
-use App\Models\Mahasiswa;
+use App\Services\UserService;
+use App\Http\Requests\StorePenggunaRequest;
+use App\Http\Requests\UpdatePenggunaRequest;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Validation\Rule;
 
 class PenggunaController extends Controller
 {
+    public function __construct(private UserService $userService)
+    {
+    }
+
+    /**
+     * Menampilkan daftar semua pengguna (Admin, Dosen, Mahasiswa).
+     * Mendukung pemfilteran berdasarkan role melalui parameter query 'role'.
+     *
+     * @param Request $request
+     * @return \Illuminate\View\View
+     */
     public function index(Request $request)
     {
         $query = User::with(['dosen', 'mahasiswa.dosen.user'])->latest();
@@ -23,54 +34,38 @@ class PenggunaController extends Controller
         return view('admin.pengguna.index', compact('pengguna'));
     }
 
+    /**
+     * Menampilkan formulir pendaftaran pengguna baru.
+     * Mengirimkan daftar dosen ke view untuk dipilih saat membuat akun Mahasiswa.
+     *
+     * @return \Illuminate\View\View
+     */
     public function create()
     {
         $dosens = Dosen::with('user')->get();
         return view('admin.pengguna.form', compact('dosens'));
     }
 
-    public function store(Request $request)
+    /**
+     * Menyimpan data pengguna baru beserta profil spesifiknya ke database.
+     * Validasi ditangani oleh StorePenggunaRequest.
+     * Logika pembuatan profil ditangani oleh UserService.
+     *
+     * @param StorePenggunaRequest $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function store(StorePenggunaRequest $request)
     {
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users',
-            'password' => 'required|string|min:8',
-            'role' => 'required|in:admin,dosen,mahasiswa',
-            // Dosen
-            'nip' => 'required_if:role,dosen|nullable|string|max:20|unique:dosens,nip',
-            // Mahasiswa
-            'nim' => 'required_if:role,mahasiswa|nullable|string|max:20|unique:mahasiswas,nim',
-            'prodi' => 'required_if:role,mahasiswa|nullable|string|max:100',
-            'angkatan' => 'required_if:role,mahasiswa|nullable|integer',
-            'dosen_id' => 'required_if:role,mahasiswa|nullable|exists:dosens,id',
-        ]);
-
-        $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-            'role' => $request->role,
-        ]);
-
-        if ($request->role === 'dosen') {
-            Dosen::create([
-                'user_id' => $user->id,
-                'nip' => $request->nip,
-                'prodi' => $request->prodi_dosen ?? 'Tidak Ditentukan',
-            ]);
-        } elseif ($request->role === 'mahasiswa') {
-            Mahasiswa::create([
-                'user_id' => $user->id,
-                'dosen_id' => $request->dosen_id,
-                'nim' => $request->nim,
-                'prodi' => $request->prodi,
-                'angkatan' => $request->angkatan,
-            ]);
-        }
-
+        $this->userService->createUser($request->validated());
         return redirect()->route('admin.pengguna.index')->with('success', 'Pengguna berhasil ditambahkan.');
     }
 
+    /**
+     * Menampilkan formulir untuk mengedit data pengguna yang sudah ada.
+     *
+     * @param int $id ID pengguna yang akan diedit
+     * @return \Illuminate\View\View
+     */
     public function edit($id)
     {
         $pengguna = User::with(['dosen', 'mahasiswa'])->findOrFail($id);
@@ -78,55 +73,33 @@ class PenggunaController extends Controller
         return view('admin.pengguna.form', compact('pengguna', 'dosens'));
     }
 
-    public function update(Request $request, $id)
+    /**
+     * Memperbarui data pengguna beserta profil spesifiknya di database.
+     * Validasi ditangani oleh UpdatePenggunaRequest.
+     * Logika pembaruan profil ditangani oleh UserService.
+     *
+     * @param UpdatePenggunaRequest $request
+     * @param int $id ID pengguna
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function update(UpdatePenggunaRequest $request, $id)
     {
         $user = User::findOrFail($id);
-
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => ['required', 'string', 'email', 'max:255', Rule::unique('users')->ignore($user->id)],
-            'password' => 'nullable|string|min:8',
-        ]);
-
-        $user->name = $request->name;
-        $user->email = $request->email;
-        if ($request->password) {
-            $user->password = Hash::make($request->password);
-        }
-        $user->save();
-
-        if ($user->role === 'dosen' && $user->dosen) {
-            $request->validate(['nip' => ['required', 'string', 'max:20', Rule::unique('dosens')->ignore($user->dosen->id)]]);
-            $user->dosen->update(['nip' => $request->nip]);
-        } elseif ($user->role === 'mahasiswa' && $user->mahasiswa) {
-            $request->validate([
-                'nim' => ['required', 'string', 'max:20', Rule::unique('mahasiswas')->ignore($user->mahasiswa->id)],
-                'prodi' => 'required|string|max:100',
-                'angkatan' => 'required|integer',
-                'dosen_id' => 'required|exists:dosens,id',
-            ]);
-            $user->mahasiswa->update([
-                'nim' => $request->nim,
-                'prodi' => $request->prodi,
-                'angkatan' => $request->angkatan,
-                'dosen_id' => $request->dosen_id,
-            ]);
-        }
-
+        $this->userService->updateUser($user, $request->validated());
         return redirect()->route('admin.pengguna.index')->with('success', 'Data pengguna berhasil diperbarui.');
     }
 
+    /**
+     * Menghapus pengguna secara permanen dari database.
+     * Cascading delete pada profil (Dosen/Mahasiswa) ditangani oleh UserService.
+     *
+     * @param int $id ID pengguna yang akan dihapus
+     * @return \Illuminate\Http\RedirectResponse
+     */
     public function destroy($id)
     {
         $user = User::findOrFail($id);
-        // The cascading delete should be handled by DB, but if not we can delete related records
-        if ($user->role === 'dosen' && $user->dosen) {
-            $user->dosen->delete();
-        } elseif ($user->role === 'mahasiswa' && $user->mahasiswa) {
-            $user->mahasiswa->delete();
-        }
-        $user->delete();
-
+        $this->userService->deleteUser($user);
         return redirect()->route('admin.pengguna.index')->with('success', 'Pengguna berhasil dihapus.');
     }
 }

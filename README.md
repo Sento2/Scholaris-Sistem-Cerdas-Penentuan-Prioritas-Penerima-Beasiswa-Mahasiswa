@@ -1,148 +1,98 @@
 <div align="center">
+  <img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo">
   
-  # 🎓 SCHOLARIS
-  **Sistem Cerdas Rekomendasi Beasiswa Berbasis Algoritma SAW**
+  <br>
   
-  <p align="center">
-    Aplikasi web cerdas untuk membantu institusi pendidikan (sekolah/kampus) dalam menentukan prioritas penerima beasiswa secara objektif dan transparan menggunakan algoritma <strong>Simple Additive Weighting (SAW)</strong>.
-  </p>
+  # 🎓 Scholaris - Sistem Rekomendasi Beasiswa Cerdas
+  
+  **Aplikasi Sistem Pendukung Keputusan (SPK) Penentuan Prioritas Penerima Beasiswa Mahasiswa <br> Menggunakan Metode Simple Additive Weighting (SAW).**
+  
+  [![Laravel](https://img.shields.io/badge/Laravel-FF2D20?style=for-the-badge&logo=laravel&logoColor=white)](https://laravel.com)
+  [![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)](https://tailwindcss.com)
+  [![Alpine.js](https://img.shields.io/badge/Alpine.js-8BC0D0?style=for-the-badge&logo=alpine.js&logoColor=white)](https://alpinejs.dev)
+  [![MySQL](https://img.shields.io/badge/MySQL-005C84?style=for-the-badge&logo=mysql&logoColor=white)](https://www.mysql.com/)
 </div>
 
 ---
 
-## 🌟 Fitur Utama
+## 📖 Tentang Proyek
 
-Aplikasi ini memiliki 3 level pengguna (Role) dengan hak akses dan fitur yang berbeda:
+**Scholaris** adalah sebuah Sistem Pendukung Keputusan (SPK) tingkat perguruan tinggi yang dirancang untuk mempermudah panitia dan pihak jurusan dalam menyeleksi dan memprioritaskan kandidat penerima beasiswa secara adil, transparan, dan otomatis. 
 
-### 1. 👨‍🎓 Mahasiswa
-* **Pendaftaran Beasiswa**: Mengisi form pengajuan (Data Diri, Akademik, Kriteria) dan mengunggah dokumen persyaratan (KTP, KK, SKTM, Transkrip Nilai, Sertifikat).
-* **Pantau Status**: Fitur *stepper* interaktif untuk memantau status pengajuan (Menunggu Verifikasi, Sedang Diproses, Selesai).
-* **Lihat Skor SAW**: Melihat hasil perhitungan SAW secara detail beserta peringkat (Ranking) yang diperoleh dibandingkan pendaftar lain.
+Sistem ini menerapkan metode perhitungan **SAW (Simple Additive Weighting)**, sebuah algoritma *Multi-Attribute Decision Making* yang bekerja dengan cara mencari penjumlahan terbobot dari rating kinerja pada setiap alternatif (mahasiswa) pada semua atribut (kriteria).
 
-### 2. 👨‍🏫 Dosen Pembimbing
-* **Verifikasi Dokumen**: Melihat daftar mahasiswa bimbingan yang mengajukan beasiswa, lengkap dengan *live search* dan filter.
-* **Review Pengajuan**: Tampilan *split-screen* untuk meninjau kecocokan data kriteria yang diinput dengan dokumen fisik yang diunggah.
-* **Penolakan Terstruktur**: Fitur form interaktif yang mewajibkan dosen mengisi catatan/alasan spesifik apabila menolak pengajuan mahasiswa.
-* **Laporan Eksekutif**: *Dashboard* analitik yang menampilkan ringkasan kelulusan mahasiswa bimbingan dengan visualisasi progres dan skor SAW.
+## ✨ Fitur Unggulan
 
-### 3. 👨‍💻 Administrator (Jurusan/Kampus)
-* **Manajemen Pendaftar**: Mengelola seluruh data mahasiswa yang mendaftar beasiswa di tingkat fakultas/kampus.
-* **Eksekusi Algoritma SAW**: Tombol pintar untuk memicu perhitungan dan pembobotan seluruh pendaftar secara otomatis.
-* **Manajemen Kriteria & Bobot**: Menambah, mengubah, atau menghapus kriteria penilaian (IPK, Penghasilan Orang Tua, Prestasi, Keaktifan) serta mengatur tipe (*Benefit/Cost*).
-* **Export Laporan (PDF/Excel)**: Mengekspor laporan final dalam bentuk *Spreadsheet* (Excel) yang rapi dan Surat Keputusan resmi ber-kop universitas (PDF) menggunakan `dompdf` dan `laravel-excel`.
+Proyek ini dibangun dengan standar **Enterprise-Grade Clean Code**, mengimplementasikan *Service Layer Pattern*, *Form Request Validations*, dan antarmuka UI/UX yang modern.
 
----
+- 🔐 **Autentikasi Multi-Role:** Akses aman yang terbagi secara presisi untuk 3 tipe pengguna: **Admin Jurusan**, **Dosen Pembimbing**, dan **Mahasiswa**.
+- 📝 **Registrasi Mahasiswa Mandiri:** Mahasiswa dapat mendaftar akun mereka sendiri, memilih Program Studi, dan menunjuk Dosen Pembimbing secara langsung dari *dropdown* database dinamis.
+- 🧮 **Mesin Perhitungan SAW Otomatis:** Perhitungan matriks keputusan, normalisasi matriks, hingga nilai preferensi akhir dieksekusi secara instan dan akurat.
+- 📊 **Dashboard Analitik Interaktif:** Visualisasi data pendaftar (berdasarkan program studi dan angkatan) yang disajikan dengan grafik dinamis menggunakan *ApexCharts*.
+- 🔔 **Sistem Notifikasi Real-Time:** Memberikan peringatan (*alert*) setiap ada pembaruan status pendaftaran ke dashboard Dosen Pembimbing maupun Mahasiswa.
+- 👥 **Master Manajemen Pengguna (Admin):** Fasilitas bagi Admin untuk membuat, memodifikasi, dan menghapus seluruh tipe pengguna (*Admin, Dosen, Mahasiswa*) dalam satu pintu berteknologi *Database Transaction*.
 
 ## 🛠️ Teknologi yang Digunakan
 
-* **Framework:** Laravel 10 (PHP 8.2+)
-* **Database:** MySQL
-* **Frontend:** TailwindCSS, Alpine.js, Blade Components
-* **Autentikasi:** Laravel Breeze
-* **Library Tambahan:**
-  * `barryvdh/laravel-dompdf` (Cetak Laporan PDF)
-  * `maatwebsite/excel` (Export Data Excel)
+*   **Backend:** PHP 8.x, Laravel 11.x
+*   **Frontend:** HTML5, Alpine.js, Tailwind CSS
+*   **Database:** MySQL / MariaDB
+*   **Arsitektur Kode:** MVC, Repository/Service Pattern, Fat-Model Thin-Controller
+*   **Visualisasi:** ApexCharts
+
+## 🚀 Panduan Instalasi (Development)
+
+Ikuti langkah-langkah di bawah ini untuk menjalankan aplikasi di komputer lokal Anda:
+
+1. **Clone repositori ini:**
+   ```bash
+   git clone https://github.com/username/scholaris.git
+   cd scholaris
+   ```
+
+2. **Instal dependensi Composer:**
+   ```bash
+   composer install
+   ```
+
+3. **Instal dependensi NPM (Tailwind & Vite):**
+   ```bash
+   npm install
+   npm run build
+   ```
+
+4. **Siapkan konfigurasi `.env`:**
+   ```bash
+   cp .env.example .env
+   php artisan key:generate
+   ```
+   *Atur koneksi database Anda (DB_DATABASE, DB_USERNAME, DB_PASSWORD) di dalam file `.env`.*
+
+5. **Jalankan Migrasi & Seeder Database:**
+   ```bash
+   php artisan migrate --seed
+   ```
+
+6. **Jalankan server lokal:**
+   ```bash
+   php artisan serve
+   ```
+   *Sistem kini dapat diakses melalui `http://localhost:8000`.*
 
 ---
 
-## 🚀 Panduan Instalasi
+## 👨‍💻 Tim Pengembang
 
-Ikuti langkah-langkah di bawah ini untuk menjalankan aplikasi secara lokal.
+Proyek ini dirancang dan dikembangkan dengan penuh dedikasi oleh:
 
-### 1. Kebutuhan Sistem
-Pastikan Anda telah menginstal:
-* PHP >= 8.2
-* Composer
-* MySQL atau MariaDB
-* Node.js & NPM
+| Nama Lengkap | NIM |
+| :--- | :--- |
+| **Moh Maghribi Ramadhan** | `F55124104` |
+| **Irpandi** | `F55124096` |
+| **Annisa Nurqalbiyah** | `F55124089` |
+| **Ramon Pasungke** | `F55124115` |
 
-### 2. Kloning Repositori
-```bash
-git clone https://github.com/username/scholaris.git
-cd scholaris
-```
-
-### 3. Instalasi Dependensi
-```bash
-composer install
-npm install
-```
-
-### 4. Konfigurasi Environment
-Salin file `.env.example` menjadi `.env` lalu sesuaikan konfigurasi *database* Anda.
-```bash
-cp .env.example .env
-```
-Sesuaikan baris berikut di file `.env`:
-```env
-DB_CONNECTION=mysql
-DB_HOST=127.0.0.1
-DB_PORT=3306
-DB_DATABASE=projek_mk
-DB_USERNAME=root
-DB_PASSWORD=
-```
-
-### 5. Generate Application Key
-```bash
-php artisan key:generate
-```
-
-### 6. Migrasi Database dan Seeder
-Jalankan perintah ini untuk membangun tabel dan mengisi *dummy data* (Akun bawaan dan data uji coba SAW).
-```bash
-php artisan migrate:fresh --seed
-```
-
-### 7. Compile Assets (TailwindCSS & JS)
-```bash
-npm run build
-# Atau gunakan npm run dev untuk development
-```
-
-### 8. Jalankan Server
-```bash
-php artisan serve
-```
-Akses aplikasi melalui browser di: `http://localhost:8000`
-
----
-
-## 🔑 Akses Login Bawaan (Dummy Data)
-
-Setelah menjalankan `migrate:fresh --seed`, Anda dapat menggunakan akun berikut untuk masuk ke dalam sistem:
-
-| Role | Email | Password | Keterangan |
-| :--- | :--- | :--- | :--- |
-| **Admin** | `admin@scholaris.ac.id` | `password` | Akses penuh untuk manajemen SAW dan ekspor laporan. |
-| **Dosen** | `dosen@scholaris.ac.id` | `password` | Meninjau mahasiswa bimbingan dan melihat statistik lulus. |
-| **Mahasiswa** | `mhs1@scholaris.ac.id` | `password` | (Tersedia mhs1 hingga mhs20) |
-
-> **Catatan**: Data mahasiswa simulasi (mhs1 - mhs15) secara otomatis sudah diverifikasi dan dihitung peringkat SAW-nya oleh *Seeder* untuk memudahkan pengujian.
-
----
-
-## 🧮 Tentang Algoritma SAW
-
-Metode **Simple Additive Weighting (SAW)** sering juga dikenal dengan istilah metode penjumlahan terbobot. Konsep dasar metode SAW adalah mencari penjumlahan terbobot dari rating kinerja pada setiap alternatif pada semua atribut.
-
-Sistem SCHOLARIS secara cerdas:
-1. Menentukan nilai kriteria setiap pendaftar.
-2. Melakukan **Normalisasi** matriks keputusan (berdasarkan sifat kriteria *Benefit* atau *Cost*).
-3. Melakukan **Pembobotan** terhadap hasil normalisasi.
-4. Menghasilkan **Skor Akhir (Preferensi)** untuk melakukan pemeringkatan secara *real-time*.
-
----
-
-## 🧹 Arsitektur Clean Code
-
-Aplikasi ini dibangun dengan mengedepankan prinsip *best practices* Laravel (Clean Code & Solid Principles):
-* **Form Request Injection:** Menghindari *Fat Controllers*. Semua logika validasi input ditempatkan terpisah pada kelas khusus (seperti `StorePengajuanRequest`, `ProsesVerifikasiRequest`, dll), membuat baris kode *controller* menjadi sangat ramping dan murni hanya menangani alur bisnis utama.
-* **Eloquent Relationships:** Menghindari kueri manual (seperti `DB::table()`) yang rentan *bug*. Semua data yang saling terhubung (contoh: `User` ke `Dosen` atau `Mahasiswa`) sudah diikat kuat menggunakan fitur relasi model bawaan Laravel Eloquent ORM.
-* **Service Pattern:** Logika kompleks matematika untuk algoritma SAW dipisahkan secara elegan ke dalam kelas khusus yaitu `SAWService`, menjaga seluruh struktur tetap *scalable* (mudah dikembangkan).
-
----
-
+<br>
 <div align="center">
-  <p>Dibuat dengan ❤️ untuk sistem pendidikan yang lebih transparan.</p>
+  <i>Dibuat untuk Tugas Sistem Cerdas / Sistem Pendukung Keputusan</i>
 </div>
