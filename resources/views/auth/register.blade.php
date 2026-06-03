@@ -111,20 +111,62 @@
             <form method="POST" action="{{ route('register') }}" class="space-y-5">
                 @csrf
 
-                <!-- Name -->
-                <div>
-                    <label for="name" class="block text-sm font-medium text-gray-700 mb-1">Nama Lengkap</label>
-                    <input id="name" type="text" name="name" value="{{ old('name') }}" required autofocus autocomplete="name" 
-                           class="input-field w-full px-4 py-2.5 rounded-lg text-sm" placeholder="Contoh: Budi Santoso">
-                    <x-input-error :messages="$errors->get('name')" class="mt-1 text-sm" />
+                <!-- Name & Email (Grid) -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label for="name" class="block text-sm font-medium text-gray-700 mb-1">Nama Lengkap</label>
+                        <input id="name" type="text" name="name" value="{{ old('name') }}" required autofocus autocomplete="name" 
+                               class="input-field w-full px-4 py-2.5 rounded-lg text-sm" placeholder="Budi Santoso">
+                        <x-input-error :messages="$errors->get('name')" class="mt-1 text-sm" />
+                    </div>
+                    <div>
+                        <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                        <input id="email" type="email" name="email" value="{{ old('email') }}" required autocomplete="username" 
+                               class="input-field w-full px-4 py-2.5 rounded-lg text-sm" placeholder="nama@email.com">
+                        <x-input-error :messages="$errors->get('email')" class="mt-1 text-sm" />
+                    </div>
                 </div>
 
-                <!-- Email -->
-                <div>
-                    <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Email</label>
-                    <input id="email" type="email" name="email" value="{{ old('email') }}" required autocomplete="username" 
-                           class="input-field w-full px-4 py-2.5 rounded-lg text-sm" placeholder="nama@email.com">
-                    <x-input-error :messages="$errors->get('email')" class="mt-1 text-sm" />
+                <!-- NIM & Angkatan (Grid) -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label for="nim" class="block text-sm font-medium text-gray-700 mb-1">NIM</label>
+                        <input id="nim" type="text" name="nim" value="{{ old('nim') }}" required 
+                               class="input-field w-full px-4 py-2.5 rounded-lg text-sm" placeholder="Contoh: 105841108222">
+                        <x-input-error :messages="$errors->get('nim')" class="mt-1 text-sm" />
+                    </div>
+                    <div>
+                        <label for="angkatan" class="block text-sm font-medium text-gray-700 mb-1">Angkatan (Tahun Masuk)</label>
+                        <input id="angkatan" type="number" name="angkatan" value="{{ old('angkatan') }}" required min="2015" max="{{ date('Y')+1 }}"
+                               class="input-field w-full px-4 py-2.5 rounded-lg text-sm" placeholder="Contoh: 2022">
+                        <x-input-error :messages="$errors->get('angkatan')" class="mt-1 text-sm" />
+                    </div>
+                </div>
+
+                <!-- Prodi & Dosen Pembimbing (Grid) -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label for="prodi" class="block text-sm font-medium text-gray-700 mb-1">Program Studi</label>
+                        <select id="prodi" name="prodi" required class="input-field w-full px-4 py-2.5 rounded-lg text-sm">
+                            <option value="">-- Pilih Prodi --</option>
+                            <option value="Informatika" {{ old('prodi') == 'Informatika' ? 'selected' : '' }}>Informatika</option>
+                            <option value="Sistem Informasi" {{ old('prodi') == 'Sistem Informasi' ? 'selected' : '' }}>Sistem Informasi</option>
+                            <option value="Teknologi Informasi" {{ old('prodi') == 'Teknologi Informasi' ? 'selected' : '' }}>Teknologi Informasi</option>
+                        </select>
+                        <x-input-error :messages="$errors->get('prodi')" class="mt-1 text-sm" />
+                    </div>
+                    <div>
+                        <label for="dosen_id" class="block text-sm font-medium text-gray-700 mb-1">Dosen Pembimbing</label>
+                        <select id="dosen_id" name="dosen_id" required class="input-field w-full px-4 py-2.5 rounded-lg text-sm">
+                            <option value="">-- Pilih Dosen --</option>
+                            @foreach($dosens as $dosen)
+                                <option value="{{ $dosen->id }}" {{ old('dosen_id') == $dosen->id ? 'selected' : '' }}>
+                                    {{ $dosen->user->name ?? 'Unknown' }}
+                                </option>
+                            @endforeach
+                        </select>
+                        <x-input-error :messages="$errors->get('dosen_id')" class="mt-1 text-sm" />
+                    </div>
                 </div>
 
                 <!-- Password -->

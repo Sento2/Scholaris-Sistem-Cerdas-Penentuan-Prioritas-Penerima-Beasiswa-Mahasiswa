@@ -93,12 +93,7 @@
                 <p class="text-gray-500 text-sm">Masuk ke akun Anda untuk melanjutkan.</p>
             </div>
 
-            <!-- Role Tabs -->
-            <div class="flex bg-gray-100 p-1 rounded-lg mb-6" x-data="{ tab: 'mahasiswa' }">
-                <button @click="tab = 'mahasiswa'" :class="tab === 'mahasiswa' ? 'bg-white shadow-sm text-gray-900 font-semibold' : 'text-gray-500 hover:text-gray-700'" class="flex-1 py-2 text-sm rounded-md transition-all" type="button">Mahasiswa</button>
-                <button @click="tab = 'dosen'" :class="tab === 'dosen' ? 'bg-white shadow-sm text-gray-900 font-semibold' : 'text-gray-500 hover:text-gray-700'" class="flex-1 py-2 text-sm rounded-md transition-all" type="button">Dosen</button>
-                <button @click="tab = 'admin'" :class="tab === 'admin' ? 'bg-white shadow-sm text-gray-900 font-semibold' : 'text-gray-500 hover:text-gray-700'" class="flex-1 py-2 text-sm rounded-md transition-all" type="button">Admin</button>
-            </div>
+
 
             <x-auth-session-status class="mb-4" :status="session('status')" />
 

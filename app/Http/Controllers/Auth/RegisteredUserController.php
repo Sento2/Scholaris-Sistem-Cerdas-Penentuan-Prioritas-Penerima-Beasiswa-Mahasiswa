@@ -12,6 +12,8 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
 use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
+use App\Models\Dosen;
+use App\Models\Mahasiswa;
 
 class RegisteredUserController extends Controller
 {
@@ -20,7 +22,8 @@ class RegisteredUserController extends Controller
      */
     public function create(): View
     {
-        return view('auth.register');
+        $dosens = Dosen::with('user')->get();
+        return view('auth.register', compact('dosens'));
     }
 
     /**
@@ -34,12 +37,26 @@ class RegisteredUserController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
+            'nim' => ['required', 'string', 'max:20', 'unique:mahasiswas,nim'],
+            'prodi' => ['required', 'string', 'max:100'],
+            'angkatan' => ['required', 'integer', 'min:2015', 'max:'.(date('Y') + 1)],
+            'dosen_id' => ['required', 'exists:dosens,id'],
         ]);
 
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
+            'role' => 'mahasiswa', // Set role otomatis mahasiswa untuk pendaftaran publik
+        ]);
+
+        // Buat profil mahasiswa
+        Mahasiswa::create([
+            'user_id' => $user->id,
+            'dosen_id' => $request->dosen_id,
+            'nim' => $request->nim,
+            'prodi' => $request->prodi,
+            'angkatan' => $request->angkatan,
         ]);
 
         event(new Registered($user));
