@@ -87,7 +87,7 @@ Proyek ini dirancang dan dikembangkan dengan penuh dedikasi oleh:
 
 | Nama Lengkap | NIM |
 | :--- | :--- |
-| **Moh Maghribi Ramadhan** | `F55124104` |
+| **Moh Magribi Ramadhan** | `F55124104` |
 | **Irpandi** | `F55124096` |
 | **Annisa Nurqalbiyah** | `F55124089` |
 | **Ramon Pasungke** | `F55124115` |
