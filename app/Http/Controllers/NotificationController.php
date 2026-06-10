@@ -15,10 +15,17 @@ class NotificationController extends Controller
      */
     public function markAsRead($id)
     {
-        $notification = Auth::user()->notifications()->where('id', $id)->first();
+        /** @var \App\Models\User $user */
+        $user = Auth::user();
+        if (! $user) {
+            return back();
+        }
+
+        $notification = $user->notifications()->find($id);
         if ($notification) {
             $notification->markAsRead();
         }
+
         return back();
     }
 
@@ -29,7 +36,13 @@ class NotificationController extends Controller
      */
     public function markAllAsRead()
     {
-        Auth::user()->unreadNotifications->markAsRead();
+        /** @var \App\Models\User $user */
+        $user = Auth::user();
+        if (! $user) {
+            return back();
+        }
+
+        $user->unreadNotifications->markAsRead();
         return back();
     }
 }

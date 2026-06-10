@@ -42,6 +42,7 @@
             background-color: #047857;
         }
     </style>
+    <link rel="icon" type="image/svg+xml" href="{{ asset('favicon.svg') }}">
 </head>
 <body class="bg-gray-50 text-gray-900 antialiased min-h-screen flex">
 

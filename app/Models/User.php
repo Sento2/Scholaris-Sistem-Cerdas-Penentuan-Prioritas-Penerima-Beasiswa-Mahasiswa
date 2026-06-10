@@ -7,6 +7,11 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
+/**
+ * @method \Illuminate\Database\Eloquent\Relations\MorphMany notifications()
+ * @property \Illuminate\Notifications\DatabaseNotificationCollection|array $notifications
+ * @property \Illuminate\Notifications\DatabaseNotificationCollection|array $unreadNotifications
+ */
 class User extends Authenticatable
 {
     /** @use HasFactory<UserFactory> */

@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <!-- Background circle -->
+  <circle cx="256" cy="256" r="256" fill="#059669"/>
+  <!-- Mortarboard/Graduation Cap -->
+  <path fill="#ffffff" d="M256 128l-144 80 144 80 128-71.11V320h32V190.22L256 128z"/>
+  <!-- Tassel -->
+  <path fill="#fbbf24" d="M416 190.22v129.78h-32V208l32-17.78z"/>
+  <!-- Base of Cap -->
+  <path fill="#d1fae5" d="M144 240v96c0 35.35 50.15 64 112 64s112-28.65 112-64v-96l-112 62.22L144 240z"/>
+</svg>
